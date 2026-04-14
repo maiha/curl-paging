@@ -1,0 +1,15 @@
+name: mock-server
+version: 0.1.0
+
+targets:
+  mock-server:
+    main: src/main.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    version: ~> 1.5
+
+crystal: ">= 1.10.0"
+
+license: MIT
