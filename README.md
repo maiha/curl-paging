@@ -1,10 +1,6 @@
-# curl-paging
+# curl-paging [![CI](https://github.com/maiha/curl-paging/actions/workflows/ci.yml/badge.svg)](https://github.com/maiha/curl-paging/actions/workflows/ci.yml)
 
 A curl-compatible CLI wrapper that optionally fetches all pages from a paginated API and outputs aggregated JSON.
-
-## Spec
-
-See [SPEC.md](SPEC.md) for details.
 
 ## Modes
 
