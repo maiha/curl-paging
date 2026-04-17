@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
 
 jobs:
   release:
@@ -12,9 +17,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Build curl-paging
         run: make build
+
+      - name: Verify static binary
+        run: LC_ALL=C file curl-paging | grep -q "statically linked"
 
       - name: Generate SHA256
         run: sha256sum curl-paging > SHA256SUMS
@@ -22,6 +32,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: |
             curl-paging
             SHA256SUMS
