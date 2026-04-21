@@ -319,17 +319,17 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# Test 15: total_pages=0 should error
+# Test 15: total_pages=0 with non-empty data should error (API inconsistency)
 # -----------------------------------------------------------------------------
 echo ""
-echo "Test 15: total_pages=0 (invalid)"
+echo "Test 15: total_pages=0 with non-empty data (inconsistent API)"
 rm -rf ./paging
 ERROR_OUTPUT=$("$CURL_PAGING" --cp "$BASE_URL/api/items?total_pages=0" 2>&1) || true
 
-if echo "$ERROR_OUTPUT" | grep -q "must be at least 1"; then
-    log_pass "total_pages=0 - correctly rejected"
+if echo "$ERROR_OUTPUT" | grep -q "total_pages is 0 but response contains data"; then
+    log_pass "total_pages=0 with data - correctly rejected"
 else
-    log_fail "total_pages=0 - should error"
+    log_fail "total_pages=0 with data - should error"
     echo "  Output: $ERROR_OUTPUT"
 fi
 
@@ -373,6 +373,21 @@ else
     log_fail "-D header output - file not created"
 fi
 rm -f ./test_header.txt
+
+# -----------------------------------------------------------------------------
+# Test 18: total_pages=0 with empty data should succeed (legitimate "no data")
+# -----------------------------------------------------------------------------
+echo ""
+echo "Test 18: total_pages=0 with empty data (valid empty response)"
+rm -rf ./paging
+OUTPUT=$("$CURL_PAGING" --cp "$BASE_URL/api/fault?mode=empty_data&total_pages=0" 2>/dev/null) || true
+
+if echo "$OUTPUT" | grep -q '"data":\[\]'; then
+    log_pass "total_pages=0 with empty data - returns empty aggregate"
+else
+    log_fail "total_pages=0 with empty data - should succeed"
+    echo "  Output: $OUTPUT"
+fi
 
 # -----------------------------------------------------------------------------
 # Summary

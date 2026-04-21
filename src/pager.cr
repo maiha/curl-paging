@@ -36,9 +36,9 @@ class Pager
         return 1
       end
 
-      # Safety valve: total_pages must be positive
-      if total_pages < 1
-        STDERR.puts "Error: total_pages (#{total_pages}) must be at least 1"
+      # Safety valve: total_pages cannot be negative
+      if total_pages < 0
+        STDERR.puts "Error: total_pages (#{total_pages}) cannot be negative"
         return 1
       end
 
@@ -48,17 +48,28 @@ class Pager
         return 1
       end
 
+      # Process first page
+      stripped = @processor.strip_pagination(result[:body])
+      first_page_data = @processor.extract_data(stripped)
+
+      # total_pages=0 is valid only if data is empty (API consistency check)
+      if total_pages == 0
+        arr = first_page_data.as_a?
+        if arr.nil? || !arr.empty?
+          STDERR.puts "Error: total_pages is 0 but response contains data"
+          return 1
+        end
+      end
+
+      @writer.complete(result[:wip_dir], stripped)
+      page_data << first_page_data
+      last_header = result[:header]
+
       # Limit to max_pages (soft limit, normal truncation)
       pages_to_fetch = Math.min(total_pages, @config.max_pages)
       if total_pages > @config.max_pages
         STDERR.puts "Note: Limiting to #{@config.max_pages} pages (total: #{total_pages})"
       end
-
-      # Process first page
-      stripped = @processor.strip_pagination(result[:body])
-      @writer.complete(result[:wip_dir], stripped)
-      page_data << @processor.extract_data(stripped)
-      last_header = result[:header]
 
       # Fetch remaining pages (up to max_pages)
       (2..pages_to_fetch).each do |page|
