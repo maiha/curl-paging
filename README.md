@@ -1,25 +1,19 @@
 # curl-paging [![CI](https://github.com/maiha/curl-paging/actions/workflows/ci.yml/badge.svg)](https://github.com/maiha/curl-paging/actions/workflows/ci.yml)
 
-A curl-compatible CLI wrapper that optionally fetches all pages from a paginated API and outputs aggregated JSON.
+A thin curl wrapper that transparently supports paginated APIs.
 
-## Modes
+- All arguments except `--cp` are passed directly to curl as a subprocess
+- With `--cp`, fetches all pages by calling curl repeatedly and outputs merged JSON
+- Each request/response is saved as artifacts for debugging
 
-### Default: curl wrapper mode
-
-Without `--cp`, all arguments are passed through to curl as-is.
+## Quick Start
 
 ```bash
+# Without --cp: same as curl
 curl-paging https://api.example.com/items
-# → equivalent to: curl https://api.example.com/items
-```
 
-### Pagination mode
-
-With `--cp`, fetches all pages and aggregates the results.
-
-```bash
+# With --cp: fetches all pages and outputs merged JSON
 curl-paging --cp https://api.example.com/items
-# → fetches all pages and outputs aggregated JSON
 ```
 
 ## Options
