@@ -115,7 +115,8 @@ All safety checks are designed to prevent client-side mistakes from causing exce
 |-------|------|--------|---------|
 | `--cp-limit-pages` | 1 | `total_pages (N) exceeds limit_pages (N)` | 100 |
 | `--cp-max-pages` | 0 | `Limiting to N pages (total: N)` | unlimited |
-| `total_pages < 1` | 1 | `total_pages (N) must be at least 1` | - |
+| `total_pages < 0` | 1 | `total_pages (N) cannot be negative` | - |
+| `total_pages = 0` with data | 1 | `total_pages is 0 but response contains data` | - |
 | Duplicate URL | 1 | `Duplicate URL detected` | - |
 | Duplicate page number | 1 | `Duplicate response page detected` | - |
 | Clean start | - | - | - |
